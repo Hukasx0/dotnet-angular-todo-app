@@ -22,5 +22,62 @@ namespace dotnet_angular_todo_app.Server.Controllers
         {
             return await _context.Todos.ToListAsync();
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TodoItem>> GetTodo(int id)
+        {
+            var todo = await _context.Todos.FindAsync(id);
+            if (todo == null)
+            {
+                return NotFound();
+            }
+            return todo;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<IEnumerable<TodoItem>>> AddTodo([FromBody] TodoItem todo)
+        {
+            _context.Todos.Add(todo);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetTodo), new { id = todo.Id }, todo);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTodo(int id, TodoItem todo)
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException) 
+            {
+                var todoItem = await _context.Todos.FindAsync(id);
+                if (todoItem == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTodo(int id)
+        {
+            var todo = await _context.Todos.FindAsync(id);
+            if (todo == null)
+            {
+                return NotFound();
+            }
+
+            _context.Todos.Remove(todo);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

@@ -19,9 +19,20 @@ namespace dotnet_angular_todo_app.Server
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<TodoContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection"))
+                .EnableSensitiveDataLogging()
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            );
+                
 
             var app = builder.Build();
+
+            // Auto db migration
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<TodoContext>();
+                dbContext.Database.Migrate();
+            }
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
