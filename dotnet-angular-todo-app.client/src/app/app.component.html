@@ -1,16 +1,25 @@
-﻿<h1>Todo List</h1>
-
-<form (ngSubmit)="createTodo()">
-  <input type="text" [(ngModel)]="newTodo.title" name="title" placeholder="Enter new todo" />
-  <button type="submit">Add</button>
-</form>
-
-<p *ngIf="!todos"><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationangular">https://aka.ms/jspsintegrationangular</a> for more details.</em></p>
-
-<ul>
-  <li *ngFor="let todo of todos">
-    <input type="checkbox" [(ngModel)]="todo.isCompleted" (change)="updateTodo(todo)" />
-    <span [class.completed]="todo.isCompleted">{{ todo.title }}</span>
-    <button (click)="deleteTodo(todo)">Delete</button>
-  </li>
-</ul>
+﻿<div class="container mt-4">
+    <h1 class="text-center">Todo List</h1>
+  
+    <form (ngSubmit)="createTodo()" class="mb-3">
+      <div class="input-group">
+        <input type="text" [(ngModel)]="newTodo.title" name="title" placeholder="Enter new todo" class="form-control" required />
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+    </form>
+  
+    <p *ngIf="!todos" class="text-center">
+      <em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationangular">https://aka.ms/jspsintegrationangular</a> for more details.</em>
+    </p>
+  
+    <ul class="list-group">
+      <li *ngFor="let todo of todos" class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <input type="checkbox" [(ngModel)]="todo.isCompleted" (change)="updateTodo(todo)" class="me-2" />
+          <span [class.completed]="todo.isCompleted" [ngClass]="{'text-decoration-line-through': todo.isCompleted}">{{ todo.title }}</span>
+        </div>
+        <button (click)="deleteTodo(todo)" class="btn btn-danger btn-sm">Delete</button>
+      </li>
+    </ul>
+  </div>
+  
