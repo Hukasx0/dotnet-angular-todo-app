@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
+interface TodoItem {
+  id: number;
+  title: string;
+  isCompleted: boolean;
 }
 
 @Component({
@@ -14,18 +13,19 @@ interface WeatherForecast {
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  public forecasts: WeatherForecast[] = [];
+  public todos: TodoItem[] = [];
+  newTodo: TodoItem = { id: 0, title: '', isCompleted: false };
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.getForecasts();
+    this.getTodos();
   }
 
-  getForecasts() {
-    this.http.get<WeatherForecast[]>('/weatherforecast').subscribe(
+  getTodos() {
+    this.http.get<TodoItem[]>('/api/todo').subscribe(
       (result) => {
-        this.forecasts = result;
+        this.todos = result;
       },
       (error) => {
         console.error(error);
@@ -33,5 +33,26 @@ export class AppComponent implements OnInit {
     );
   }
 
-  title = 'dotnet-angular-todo-app.client';
+  createTodo() {
+    this.http
+      .post<TodoItem>('/api/todo', this.newTodo)
+      .subscribe((result) => {
+        this.todos.push(result);
+        this.newTodo = { id: 0, title: '', isCompleted: false };
+      });
+  }
+
+  updateTodo(todo: TodoItem) {
+    this.http
+      .put<TodoItem>(`/api/todo/${todo.id}`, todo)
+      .subscribe(() => this.getTodos());
+  }
+
+  deleteTodo(todo: TodoItem) {
+    this.http
+      .delete<TodoItem>(`/api/todo/${todo.id}`)
+      .subscribe(() => this.getTodos());
+  }
+
+  title = 'dotnet-angular-todo-app';
 }

@@ -43,26 +43,35 @@ namespace dotnet_angular_todo_app.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTodo(int id, TodoItem todo)
+        public async Task<IActionResult> UpdateTodo(int id, TodoItem todoItem)
         {
+            if (id != todoItem.Id)
+            {
+                return BadRequest();
+            }
+            
+            var existingTodo = await _context.Todos.FindAsync(id);
+            if (existingTodo == null)
+            {
+                return NotFound();
+            }
+
+            _context.Entry(todoItem).State = EntityState.Modified;
+
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok(existingTodo);
             }
-            catch (DbUpdateConcurrencyException) 
+            catch (DbUpdateConcurrencyException)
             {
-                var todoItem = await _context.Todos.FindAsync(id);
-                if (todoItem == null)
+                var todo = await _context.Todos.FindAsync(id);
+                if (todo == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
-            return NoContent();
         }
 
         [HttpDelete("{id}")]

@@ -1,24 +1,16 @@
-﻿<h1 id="tableLabel">Weather forecast</h1>
+﻿<h1>Todo List</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
+<form (ngSubmit)="createTodo()">
+  <input type="text" [(ngModel)]="newTodo.title" name="title" placeholder="Enter new todo" />
+  <button type="submit">Add</button>
+</form>
 
-<p *ngIf="!forecasts"><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationangular">https://aka.ms/jspsintegrationangular</a> for more details.</em></p>
+<p *ngIf="!todos"><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationangular">https://aka.ms/jspsintegrationangular</a> for more details.</em></p>
 
-<table *ngIf="forecasts">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let forecast of forecasts">
-            <td>{{ forecast.date }}</td>
-            <td>{{ forecast.temperatureC }}</td>
-            <td>{{ forecast.temperatureF }}</td>
-            <td>{{ forecast.summary }}</td>
-        </tr>
-    </tbody>
-</table>
+<ul>
+  <li *ngFor="let todo of todos">
+    <input type="checkbox" [(ngModel)]="todo.isCompleted" (change)="updateTodo(todo)" />
+    <span [class.completed]="todo.isCompleted">{{ todo.title }}</span>
+    <button (click)="deleteTodo(todo)">Delete</button>
+  </li>
+</ul>
