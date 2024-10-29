@@ -1,4 +1,8 @@
 
+using dotnet_angular_todo_app.Server.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
 namespace dotnet_angular_todo_app.Server
 {
     public class Program
@@ -13,6 +17,9 @@ namespace dotnet_angular_todo_app.Server
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<TodoContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
             var app = builder.Build();
 
